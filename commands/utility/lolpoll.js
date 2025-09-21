@@ -7,6 +7,7 @@ const userService = require('../../db/userController');
 
 async function onMatchEnd(matchId,summoner,interaction) {
     console.log(`Match ${matchId} has ended. Processing bets...`);
+    riotApi.delay(30000);
     const matchBets = betController.getBetsByMatchId(matchId);
     if (!matchBets) {
         console.log(`No bets found for match ${matchId}.`);
@@ -32,7 +33,7 @@ async function onMatchEnd(matchId,summoner,interaction) {
         )
         .setFooter({ text: 'Thank you for betting with Japanese Garden LoL Bahis!' })
         .setTimestamp();
-    await interaction.update({embeds: [embed]})
+    return embed;
 }
 
 
@@ -70,7 +71,8 @@ module.exports = {
         const tagline = interaction.options.getString('summonername').split('#')[1];
         const region = interaction.options.getString('region');
         const minBetAmount = interaction.options.getNumber('betamount') || 50;
-        await interaction.reply("Fetching match data, please wait...");
+        await interaction.deferReply();
+        await interaction.editReply('Fetching match data, please wait...');
         try {
             const summoner = await riotApi.getAccountBySummonerName(summonerName, tagline);
             if (!summoner) {
@@ -135,7 +137,13 @@ module.exports = {
             const row = new ActionRowBuilder().addComponents(join,quit);
 
             await interaction.editReply({ embeds: [resultEmbed],components: [row]});
-            watchMatchEnd(matchId,summoner,interaction, onMatchEnd);
+            try {
+                const embed = await watchMatchEnd(matchId, summoner, interaction, onMatchEnd);
+                await interaction.editReply({ embeds: [embed] });
+            } catch(error) {
+                console.error('Error watching match end:', error);
+                await interaction.editReply('An error occurred while processing the match result.');
+            }
         } catch (error) {
             console.error('Error processing lolpoll command:', error);
             await interaction.editReply('An error occurred while fetching the match data. Please try again later.');

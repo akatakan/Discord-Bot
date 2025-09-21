@@ -1,4 +1,4 @@
-const { Events, StringSelectMenuBuilder } = require('discord.js');
+const { Events, MessageFlags } = require('discord.js');
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
 const userService = require('../db/userController');
 const betService = require('../db/betController');
@@ -12,13 +12,13 @@ module.exports = {
         if(customId.startsWith('placeBet-')){
             const parts = customId.split('-');
             if(parts.length !== 3){
-                await interaction.reply({content: 'Geçersiz buton etkileşimi.', ephemeral: true});
+                await interaction.reply({content: 'Geçersiz buton etkileşimi.',flags: MessageFlags.Ephemeral});
                 return;
             }
             const matchId = parts[1];
             const minBetAmount = parseInt(parts[2], 10);
             if(isNaN(minBetAmount) || minBetAmount <= 0){
-                await interaction.reply({content: 'Geçersiz minimum bahis miktarı.', ephemeral: true});
+                await interaction.reply({content: 'Geçersiz minimum bahis miktarı.',flags: MessageFlags.Ephemeral});
                 return;
             }
             let user = await userService.getUserById(interaction.user.id);
@@ -27,17 +27,17 @@ module.exports = {
                 user = await userService.getUserById(interaction.user.id);
             }
             if(user.balance < minBetAmount){
-                await interaction.reply({content: `Yetersiz bakiye. Minimum bahis miktarı ${minBetAmount}.`, ephemeral: true});
+                await interaction.reply({content: `Yetersiz bakiye. Minimum bahis miktarı ${minBetAmount}.`,flags: MessageFlags.Ephemeral});
                 return;
             }
             if(betService.hasActiveBet(interaction.user.id, matchId)){
-                await interaction.reply({content: 'Bu maç için zaten aktif bir bahsiniz var.', ephemeral: true});
+                await interaction.reply({content: 'Bu maç için zaten aktif bir bahsiniz var.',flags: MessageFlags.Ephemeral});
                 return;
             }
             const matchStarts = betService.getMatchBetById(matchId).started_at;
             const now = new Date().now;
             if(now - new Date(matchStarts).getTime() > 5*60*1000){
-                await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan sonra bahis kabul edilemiyor.', ephemeral: true});
+                await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
                 return;
             }
 
@@ -68,18 +68,18 @@ module.exports = {
         else if(customId.startsWith('quitBet-')){
             const parts = customId.split('-');
             if(parts.length !== 3){
-                await interaction.reply({content: 'Geçersiz buton etkileşimi.', ephemeral: true});
+                await interaction.reply({content: 'Geçersiz buton etkileşimi.',flags: MessageFlags.Ephemeral});
                 return;
             }
             const matchId = parts[1];
             const userId = parts[2];
             if(interaction.user.id !== userId){
-                await interaction.reply({content: 'Bu butona tıklama yetkiniz yok.', ephemeral: true});
+                await interaction.reply({content: 'Bu butona tıklama yetkiniz yok.',flags: MessageFlags.Ephemeral});
                 return;
             }
             betService.closeMatchBet(matchId);
             betService.deleteMatchBets(matchId);
-            await interaction.reply({content: 'Bahis iptal edildi.', ephemeral: true});
+            await interaction.reply({content: 'Bahis iptal edildi.',flags: MessageFlags.Ephemeral});
             interaction.message.delete();
         }
         else{

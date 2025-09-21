@@ -1,4 +1,4 @@
-const { Events,EmbedBuilder } = require("discord.js");
+const { Events,EmbedBuilder, MessageFlags } = require("discord.js");
 const userService = require('../db/userController');
 const betService = require('../db/betController');
 
@@ -8,38 +8,38 @@ module.exports = {
         if(!interaction.isModalSubmit()) return;
         const { customId } = interaction;
         if(!customId.startsWith('betModal-')){
-            await interaction.reply({content: 'Geçersiz modal etkileşimi.', ephemeral: true});
+            await interaction.reply({content: 'Geçersiz modal etkileşimi.',flags: MessageFlags.Ephemeral});
             return;
         }
         const parts = customId.split('-');
         if(parts.length !== 3){
-            await interaction.reply({content: 'Geçersiz modal etkileşimi.', ephemeral: true});
+            await interaction.reply({content: 'Geçersiz modal etkileşimi.',flags: MessageFlags.Ephemeral});
             return;
         }
         const matchId = parts[1];
         const minBetAmount = parseInt(parts[2], 10);
         if(isNaN(minBetAmount) || minBetAmount <= 0){
-            await interaction.reply({content: 'Geçersiz minimum bahis miktarı.', ephemeral: true});
+            await interaction.reply({content: 'Geçersiz minimum bahis miktarı.',flags: MessageFlags.Ephemeral});
             return;
         }
         const betAmountStr = interaction.fields.getTextInputValue('betAmountInput');
         const betAmount = parseInt(betAmountStr, 10);
         if(isNaN(betAmount) || betAmount < minBetAmount){
-            await interaction.reply({content: `Geçersiz bahis miktarı. Minimum bahis miktarı ${minBetAmount}.`, ephemeral: true});
+            await interaction.reply({content: `Geçersiz bahis miktarı. Minimum bahis miktarı ${minBetAmount}.`,flags: MessageFlags.Ephemeral});
             return;
         }
         const winOrLose = interaction.fields.getTextInputValue('winPredictionInput').toLowerCase();
         if(winOrLose !== 'win' && winOrLose !== 'lose'){
-            await interaction.reply({content: 'Geçersiz tahmin. Lütfen "Win" veya "Lose" girin.', ephemeral: true});
+            await interaction.reply({content: 'Geçersiz tahmin. Lütfen "Win" veya "Lose" girin.',flags: MessageFlags.Ephemeral});
             return;
         }
         let user = await userService.getUserById(interaction.user.id);
         if(!user){
-            await interaction.reply({content: 'Kullanıcı bulunamadı. Lütfen önce bir komut kullanarak kaydolun.', ephemeral: true});
+            await interaction.reply({content: 'Kullanıcı bulunamadı. Lütfen önce bir komut kullanarak kaydolun.',flags: MessageFlags.Ephemeral});
             return;
         }
         if(user.balance < betAmount){
-            await interaction.reply({content: `Yetersiz bakiye. Mevcut bakiyeniz ${user.balance}.`, ephemeral: true});
+            await interaction.reply({content: `Yetersiz bakiye. Mevcut bakiyeniz ${user.balance}.`,flags: MessageFlags.Ephemeral});
             return;
         }
         await userService.updateUserBalance(interaction.user.id, -betAmount);
