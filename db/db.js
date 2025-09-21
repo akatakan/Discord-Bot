@@ -15,9 +15,9 @@ CREATE TABLE IF NOT EXISTS matches_bets (
     match_id TEXT PRIMARY KEY,
     creator_id TEXT,
     is_open INTEGER DEFAULT 1,
-    started_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    started_at DATETIME,
     closed_at DATETIME,
-    FOREIGN KEY(creator_id) REFERENCES users(user_id)
+    FOREIGN KEY(creator_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 `).run();
 
@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS bets (
     amount INTEGER,
     prediction INTEGER,
     joined_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(match_id) REFERENCES matches_bets(match_id),
-    FOREIGN KEY(user_id) REFERENCES users(user_id),
+    FOREIGN KEY(match_id) REFERENCES matches_bets(match_id) ON DELETE CASCADE,
+    FOREIGN KEY(user_id) REFERENCES users(user_id) ON DELETE SET NULL,
     UNIQUE(match_id, user_id)
 );
 `).run();

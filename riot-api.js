@@ -64,6 +64,7 @@ class RiotAPI {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
     async getAccountBySummonerName(summonerName, tagline) {
+        console.log(`Fetching account for ${summonerName}#${tagline}`);
         return this.request({
             baseURL: 'https://europe.api.riotgames.com',
             url: `/riot/account/v1/accounts/by-riot-id/${summonerName}/${tagline}`
@@ -112,7 +113,7 @@ class RiotAPI {
     async getMatchEndResult(matchId, summoner) {
         const match = await this.getMatchById(matchId);
         const participant = match.info.participants.find(p => p.puuid === summoner.puuid);
-        return participant ? participant.win : false;
+        return participant.win ? 'win' : 'lose';
     }
 }
 

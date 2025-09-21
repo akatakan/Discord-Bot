@@ -20,9 +20,15 @@ const getUserBalance = (userId) => {
     return row ? row.balance : null;
 }
 
+const getTopUsers = (limit = 10) => {
+    const stmt = db.prepare('SELECT user_id, username, balance FROM users ORDER BY balance DESC LIMIT ?');
+    return stmt.all(limit);
+}
+
 module.exports = {
     getUserById,
     addUser,
     updateUserBalance,
-    getUserBalance
+    getUserBalance,
+    getTopUsers
 };
