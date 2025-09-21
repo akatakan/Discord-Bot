@@ -35,9 +35,10 @@ module.exports = {
                 return;
             }
             const matchStarts = betService.getMatchBetById(matchId).started_at;
-            const now = new Date().now;
-            if(now - new Date(matchStarts).getTime() > 5*60*1000){
-                await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
+            const now = Date.now();
+            const diff  = now - new Date(matchStarts).getTime();
+            if( diff > 5*60*1000){
+                await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan 5 dk sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
                 return;
             }
 
