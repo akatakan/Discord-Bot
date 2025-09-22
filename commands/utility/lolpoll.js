@@ -140,7 +140,7 @@ module.exports = {
             try {
                 console.log(`Watching match ${matchId} for end...`);
                 const embed = await watchMatchEnd(matchId, summoner, onMatchEnd);
-                await interaction.editReply({ embeds: [embed] });
+                await interaction.followUp({ embeds: [embed] });
             } catch(error) {
                 console.error('Error watching match end:', error);
                 await interaction.editReply('An error occurred while processing the match result.');
