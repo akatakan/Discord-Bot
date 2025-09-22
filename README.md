@@ -46,7 +46,7 @@ cd Discord-Bot
 
 2. Bağımlılıkları yükleyin:
 ```
-npm install
+yarn install
 ```
 
 3. `.env` dosyası oluşturun ve gerekli bilgileri ekleyin:
