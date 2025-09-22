@@ -5,7 +5,7 @@ const betController = require('../../db/betController');
 const championData = require('../../db/champions.json');
 const userService = require('../../db/userController');
 
-async function onMatchEnd(matchId,summoner,interaction) {
+async function onMatchEnd(matchId,summoner) {
     console.log(`Match ${matchId} has ended. Processing bets...`);
     riotApi.delay(30000);
     const matchBets = betController.getBetsByMatchId(matchId);
@@ -19,7 +19,7 @@ async function onMatchEnd(matchId,summoner,interaction) {
     console.log(`Match Result: ${matchResult}`);
     console.log(`Winners: ${JSON.stringify(winners)}`);
     winners.forEach(winner => {
-        userService.updateUserBalance(winner.user_id, winner.amount * 2);
+        userService.addUserBalance(winner.user_id, winner.amount * 2);
         console.log(`User ${winner.user_id} won ${winner.amount * 2} JP.`);
     });
     betController.deleteMatchBets(matchId);
@@ -138,7 +138,8 @@ module.exports = {
 
             await interaction.editReply({ embeds: [resultEmbed],components: [row]});
             try {
-                const embed = await watchMatchEnd(matchId, summoner, interaction, onMatchEnd);
+                console.log(`Watching match ${matchId} for end...`);
+                const embed = await watchMatchEnd(matchId, summoner, onMatchEnd);
                 await interaction.editReply({ embeds: [embed] });
             } catch(error) {
                 console.error('Error watching match end:', error);

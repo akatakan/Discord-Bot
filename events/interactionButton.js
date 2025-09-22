@@ -35,12 +35,12 @@ module.exports = {
                 return;
             }
             const matchStarts = betService.getMatchBetById(matchId).started_at;
-            const now = Date.now();
-            const diff  = now - new Date(matchStarts).getTime();
-            if( diff > 5*60*1000){
-                await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan 5 dk sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
-                return;
-            }
+            // const now = Date.now();
+            // const diff  = now - new Date(matchStarts).getTime();
+            // if( diff > 5*60*1000){
+            //     await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan 5 dk sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
+            //     return;
+            // }
 
             const modal = new ModalBuilder()
                 .setCustomId(`betModal-${matchId}-${minBetAmount}`)

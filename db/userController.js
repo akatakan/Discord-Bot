@@ -10,7 +10,7 @@ const addUser = (userId, username) => {
     return stmt.run(userId, username);
 }
 
-const updateUserBalance = (userId, amount) => {
+const addUserBalance = (userId, amount) => {
     const stmt = db.prepare('UPDATE users SET balance = balance + ? WHERE user_id = ?');
     return stmt.run(amount, userId);
 }
@@ -28,7 +28,7 @@ const getTopUsers = (limit = 10) => {
 module.exports = {
     getUserById,
     addUser,
-    updateUserBalance,
+    addUserBalance,
     getUserBalance,
     getTopUsers
 };

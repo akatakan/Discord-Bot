@@ -42,11 +42,11 @@ module.exports = {
             await interaction.reply({content: `Yetersiz bakiye. Mevcut bakiyeniz ${user.balance}.`,flags: MessageFlags.Ephemeral});
             return;
         }
-        await userService.updateUserBalance(interaction.user.id, -betAmount);
+        await userService.addUserBalance(interaction.user.id, -betAmount);
         await betService.addBet(matchId, interaction.user.id, betAmount, winOrLose);
         
         const bets = betService.getBetsByMatchId(matchId);
-        console.log(`Current bets for match ${matchId}:`, bets);
+        console.log(`Current bets for match ${matchId}`);
         const winBets = bets.filter(b => b.prediction === 'win').map(b => `<@${b.user_id}>: ${b.amount}`);
         const loseBets = bets.filter(b => b.prediction === 'lose').map(b => `<@${b.user_id}>: ${b.amount}`);
         const prevFields = interaction.message.embeds[0].fields
