@@ -137,10 +137,11 @@ module.exports = {
             const row = new ActionRowBuilder().addComponents(join,quit);
 
             await interaction.editReply({ embeds: [resultEmbed],components: [row]});
+            const channel = interaction.channel;
             try {
                 console.log(`Watching match ${matchId} for end...`);
                 const embed = await watchMatchEnd(matchId, summoner, onMatchEnd);
-                await interaction.followUp({ embeds: [embed] });
+                channel.send({ embeds: [embed] });
             } catch(error) {
                 console.error('Error watching match end:', error);
                 await interaction.editReply('An error occurred while processing the match result.');

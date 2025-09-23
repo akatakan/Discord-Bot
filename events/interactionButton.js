@@ -35,13 +35,13 @@ module.exports = {
                 return;
             }
             const matchStarts = betService.getMatchBetById(matchId).started_at;
-            // const now = Date.now();
-            // const diff  = now - new Date(matchStarts).getTime();
+            const now = Date.now();
+            const diff  = now - new Date(matchStarts).getTime();
             // if( diff > 5*60*1000){
             //     await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan 5 dk sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
             //     return;
             // }
-
+            console.log(`${diff} ms since match started.`);
             const modal = new ModalBuilder()
                 .setCustomId(`betModal-${matchId}-${minBetAmount}`)
                 .setTitle('Bahis Miktarını Girin');
@@ -77,6 +77,12 @@ module.exports = {
             if(interaction.user.id !== userId){
                 await interaction.reply({content: 'Bu butona tıklama yetkiniz yok.',flags: MessageFlags.Ephemeral});
                 return;
+            }
+            const bets = betService.getBetsByMatchId(matchId);
+            if(bets.length > 0){
+                bets.forEach(async (bet) => {
+                    await userService.addUserBalance(bet.user_id, bet.amount);
+                });
             }
             betService.closeMatchBet(matchId);
             betService.deleteMatchBets(matchId);
