@@ -35,13 +35,11 @@ module.exports = {
                 return;
             }
             const matchStarts = betService.getMatchBetById(matchId).started_at;
-            const now = Date.now();
-            const diff  = now - new Date(matchStarts).getTime();
-            // if( diff > 5*60*1000){
-            //     await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan 5 dk sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
-            //     return;
-            // }
-            console.log(`${diff} ms since match started.`);
+            if( diff > 300){
+                await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan 5 dk sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
+                return;
+            }
+            console.log(`${matchStarts} ms since match started.`);
             const modal = new ModalBuilder()
                 .setCustomId(`betModal-${matchId}-${minBetAmount}`)
                 .setTitle('Bahis Miktarını Girin');

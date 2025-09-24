@@ -119,8 +119,8 @@ module.exports = {
                 console.log(`New user added: ${interaction.user.username} (${interaction.user.id})`);
             }
             const matchId = activeGame.platformId+"_"+activeGame.gameId;
-            const start_time = new Date(activeGame.gameStartTime);
-            betController.createMatchBet(matchId, interaction.user.id,start_time.toDateString());
+            const start_time = activeGame.gameLength;
+            betController.createMatchBet(matchId, interaction.user.id,start_time);
        
             const join = new ButtonBuilder()
                 .setCustomId(`placeBet-${matchId}-${minBetAmount}`)

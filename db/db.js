@@ -6,7 +6,8 @@ db.prepare(`
 CREATE TABLE IF NOT EXISTS users (
     user_id TEXT PRIMARY KEY,
     username TEXT,
-    balance INTEGER DEFAULT 1000
+    balance INTEGER DEFAULT 1000,
+    last_daily_claim DATETIME DEFAULT NULL
 );
 `).run();
 

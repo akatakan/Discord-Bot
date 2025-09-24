@@ -25,10 +25,34 @@ const getTopUsers = (limit = 10) => {
     return stmt.all(limit);
 }
 
+const canClaimDaily = (userId) => {
+  const stmt = db.prepare(`SELECT last_daily_claim FROM users WHERE user_id = ?`);
+  const user = stmt.get(userId);
+  
+  if (!user || !user.last_daily_claim) return true;
+  
+  const lastClaim = new Date(user.last_daily_claim);
+  const now = new Date();
+  const hoursSinceLastClaim = (now - lastClaim) / (1000 * 60 * 60);
+  
+  return hoursSinceLastClaim >= 24;
+};
+
+const claimDailyBalance = (userId, amount = 200) => {
+  const stmt = db.prepare(`
+    UPDATE users 
+    SET balance = balance + ?, last_daily_claim = CURRENT_TIMESTAMP 
+    WHERE user_id = ?
+  `);
+  return stmt.run(amount, userId);
+};
+
 module.exports = {
     getUserById,
     addUser,
     addUserBalance,
     getUserBalance,
-    getTopUsers
+    getTopUsers,
+    canClaimDaily,
+    claimDailyBalance
 };
