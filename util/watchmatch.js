@@ -1,8 +1,9 @@
 const riotApi = require('../riot-api');
+let timer;
 
 async function watchMatchEnd(matchId,summoner, onMatchEnd, interval = 30000) {
   return new Promise((resolve, reject) => {
-    const timer = setInterval(async () => {
+    timer = setInterval(async () => {
       try {
         const isEnded = await riotApi.isMatchEnd(matchId);
         console.log(`Polling match ${matchId}: ended = ${isEnded}`);
@@ -19,4 +20,12 @@ async function watchMatchEnd(matchId,summoner, onMatchEnd, interval = 30000) {
   });
 }
 
-module.exports = { watchMatchEnd };
+async function stopWatchingMatch() {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    console.log('Stopped watching match.');
+  }
+}
+
+module.exports = { watchMatchEnd ,stopWatchingMatch };

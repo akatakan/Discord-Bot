@@ -3,6 +3,8 @@ const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = req
 const userService = require('../db/userController');
 const betService = require('../db/betController');
 const riotApi = require('../riot-api');
+const {stopWatchingMatch} = require('../util/watchmatch');
+
 module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction){
@@ -87,6 +89,7 @@ module.exports = {
             betService.closeMatchBet(matchId);
             betService.deleteMatchBets(matchId);
             betService.deleteBets(matchId);
+            await stopWatchingMatch();
             await interaction.reply({content: 'Bahis iptal edildi.',flags: MessageFlags.Ephemeral});
             interaction.message.delete();
         }
