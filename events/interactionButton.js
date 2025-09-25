@@ -2,6 +2,7 @@ const { Events, MessageFlags } = require('discord.js');
 const { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require('discord.js');
 const userService = require('../db/userController');
 const betService = require('../db/betController');
+const riotApi = require('../riot-api');
 module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction){
@@ -34,12 +35,13 @@ module.exports = {
                 await interaction.reply({content: 'Bu maç için zaten aktif bir bahsiniz var.',flags: MessageFlags.Ephemeral});
                 return;
             }
-            const matchStarts = betService.getMatchBetById(matchId).started_at;
-            if( diff > 300){
+            const match = betService.getMatchBetById(matchId);
+            const matchStarts = await riotApi.getActiveGameBySummonerId(match.region,match.summoner_id);
+            if( matchStarts.gameLength > 300){
                 await interaction.reply({content: 'Bahis süresi doldu. Maç başladıktan 5 dk sonra bahis kabul edilemiyor.',flags: MessageFlags.Ephemeral});
                 return;
             }
-            console.log(`${matchStarts} ms since match started.`);
+            console.log(`${matchStarts.gameLength/60}:${matchStarts.gameLength%60} since match started.`);
             const modal = new ModalBuilder()
                 .setCustomId(`betModal-${matchId}-${minBetAmount}`)
                 .setTitle('Bahis Miktarını Girin');
@@ -84,6 +86,7 @@ module.exports = {
             }
             betService.closeMatchBet(matchId);
             betService.deleteMatchBets(matchId);
+            betService.deleteBets(matchId);
             await interaction.reply({content: 'Bahis iptal edildi.',flags: MessageFlags.Ephemeral});
             interaction.message.delete();
         }

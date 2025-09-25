@@ -1,8 +1,8 @@
 const db = require('./db');
 
-const createMatchBet = (matchId, creatorId,started_at) => {
-    const stmt = db.prepare('INSERT OR IGNORE INTO matches_bets (match_id, creator_id, started_at) VALUES (?, ?,?)');
-    return stmt.run(matchId, creatorId,started_at);
+const createMatchBet = (matchId, creatorId,started_at, summoner_id,region) => {
+    const stmt = db.prepare('INSERT OR IGNORE INTO matches_bets (match_id, creator_id, started_at,summoner_id,region) VALUES (?, ?,?,?,?)');
+    return stmt.run(matchId, creatorId,started_at,summoner_id,region);
 };
 
 const getMatchBetById = (matchId) => {
@@ -16,6 +16,11 @@ const closeMatchBet = (matchId) => {
 }
 
 const deleteMatchBets = (matchId) => {
+    const stmt = db.prepare('DELETE FROM matches_bets WHERE match_id = ?');
+    return stmt.run(matchId);
+}
+
+const deleteBets = (matchId) => {
     const stmt = db.prepare('DELETE FROM bets WHERE match_id = ?');
     return stmt.run(matchId);
 }
@@ -41,6 +46,7 @@ module.exports = {
     getMatchBetById,
     closeMatchBet,
     deleteMatchBets,
+    deleteBets,
     addBet,
     getBetsByMatchId,
     hasActiveBet

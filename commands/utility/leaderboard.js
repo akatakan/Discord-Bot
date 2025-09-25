@@ -3,7 +3,7 @@ const userService = require('../../db/userController');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('leaderboard')
+        .setName('lb')
         .setDescription('Show the top 10 users with the highest balance.'),
     async execute(interaction) {
         const topUsers = userService.getTopUsers(10);

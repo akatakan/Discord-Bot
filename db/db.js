@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS matches_bets (
     is_open INTEGER DEFAULT 1,
     started_at DATETIME,
     closed_at DATETIME,
+    summoner_id TEXT,
     FOREIGN KEY(creator_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 `).run();

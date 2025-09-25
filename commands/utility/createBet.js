@@ -39,7 +39,7 @@ async function onMatchEnd(matchId,summoner) {
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('lolpoll')
+        .setName('bet')
         .setDescription('Check the result of a League of Legends match.')
         .addStringOption(option =>
             option.setName('region')
@@ -120,7 +120,7 @@ module.exports = {
             }
             const matchId = activeGame.platformId+"_"+activeGame.gameId;
             const start_time = activeGame.gameLength;
-            betController.createMatchBet(matchId, interaction.user.id,start_time);
+            betController.createMatchBet(matchId, interaction.user.id,start_time,summoner.puuid,region);
        
             const join = new ButtonBuilder()
                 .setCustomId(`placeBet-${matchId}-${minBetAmount}`)
